@@ -5,6 +5,10 @@ const { adicionarAgendamento, listarAgendamentos } = require('./database');
 const app = express();
 app.use(bodyParser.json());
 
+app.get('/', (req, res) => {
+    res.send('Bem-vindo à API de Agendamentos!');
+});
+
 app.post('/agendamentos', (req, res) => {
     const { nome, telefone, data, horario, servico, preco } = req.body;
     adicionarAgendamento(nome, telefone, data, horario, servico, preco, (err, id) => {
