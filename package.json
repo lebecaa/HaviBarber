@@ -1,8 +1,9 @@
 {
-  "name": "website-barbearia",
+  "name": "my-backend",
   "version": "1.0.0",
+  "main": "server.js",
   "scripts": {
-    "start": "echo 'No server to start'"
+    "start": "node server.js"
   },
   "dependencies": {
     "body-parser": "^1.20.3",
