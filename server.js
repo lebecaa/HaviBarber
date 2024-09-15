@@ -5,8 +5,10 @@ const { adicionarAgendamento, listarAgendamentos } = require('./database');
 const app = express();
 app.use(bodyParser.json());
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.get('/', (req, res) => {
-    res.send('Bem-vindo à API de Agendamentos!');
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.post('/agendamentos', (req, res) => {
