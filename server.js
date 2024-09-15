@@ -1,35 +1,33 @@
 const express = require('express');
-const cors = require('cors');
+const bodyParser = require('body-parser');
+const { adicionarAgendamento, listarAgendamentos } = require('./database'); // Importa as funções do banco de dados
+
 const app = express();
-const port = process.env.PORT || 3000;
+app.use(bodyParser.json());
 
-app.use(cors());
-app.use(express.json());
-
-// Armazenar horários agendados
-let horariosAgendados = {};
-
-// Endpoint para obter horários disponíveis
-app.get('/horarios', (req, res) => {
-    res.json(horariosAgendados);
+// Rota para adicionar um agendamento
+app.post('/agendamentos', (req, res) => {
+    const { nome, telefone, data, horario, servico, preco } = req.body;
+    adicionarAgendamento(nome, telefone, data, horario, servico, preco, (err, id) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erro ao adicionar agendamento.' });
+        }
+        res.status(201).json({ message: 'Agendamento adicionado com sucesso!', id });
+    });
 });
 
-// Endpoint para adicionar um agendamento
-app.post('/agendamento', (req, res) => {
-    const { data, horario } = req.body;
-
-    if (!horariosAgendados[data]) {
-        horariosAgendados[data] = [];
-    }
-
-    if (!horariosAgendados[data].includes(horario)) {
-        horariosAgendados[data].push(horario);
-        res.status(200).send('Agendamento realizado com sucesso');
-    } else {
-        res.status(400).send('Horário já agendado');
-    }
+// Rota para listar todos os agendamentos
+app.get('/agendamentos', (req, res) => {
+    listarAgendamentos((err, agendamentos) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erro ao listar agendamentos.' });
+        }
+        res.json(agendamentos);
+    });
 });
 
-app.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}`);
+// Inicia o servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
