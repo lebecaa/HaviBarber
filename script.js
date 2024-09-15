@@ -1,8 +1,7 @@
 let servicoSelecionado = "";
 let precoSelecionado = "";
 
-// Horários agendados armazenados na memória do cliente
-const horariosAgendados = {}; // {'data': ['horario1', 'horario2', ...]}
+const horariosAgendados = {}; 
 
 function changeScreen(button) {
     const tela1 = document.getElementById('tela-1');
@@ -53,14 +52,12 @@ async function preencherHorariosDisponiveis(data) {
     const botoesHorarios = document.querySelectorAll('.horarios button');
     
     try {
-        // Solicita horários agendados ao backend
-        const response = await fetch('/api/horarios');
+        const response = await fetch(`/agendamentos/${data}`);
         if (!response.ok) throw new Error('Erro ao buscar horários agendados');
 
         const dados = await response.json();
         Object.assign(horariosAgendados, dados);
 
-        // Atualiza a interface com base nos horários agendados
         botoesHorarios.forEach((botao) => {
             const horario = botao.textContent;
             if (horariosAgendados[data] && horariosAgendados[data].includes(horario)) {
@@ -113,13 +110,12 @@ async function confirmarAgendamento() {
 
     if (nome && telefone && data && horario) {
         try {
-            // Verifica se o horário está disponível no backend
-            const response = await fetch('/api/agendamento', {
+            const response = await fetch('/agendamentos', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ data, horario }),
+                body: JSON.stringify({ nome, telefone, data, horario, servico: servicoSelecionado, preco: precoSelecionado }),
             });
 
             if (response.ok) {

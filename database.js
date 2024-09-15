@@ -1,7 +1,5 @@
-// database.js
 const sqlite3 = require('sqlite3').verbose();
 
-// Cria ou abre um banco de dados SQLite
 const db = new sqlite3.Database('./database.db', (err) => {
     if (err) {
         console.error('Erro ao abrir o banco de dados:', err.message);
@@ -10,26 +8,6 @@ const db = new sqlite3.Database('./database.db', (err) => {
     }
 });
 
-// Cria uma tabela se não existir
-db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS agendamentos (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nome TEXT NOT NULL,
-        telefone TEXT NOT NULL,
-        data TEXT NOT NULL,
-        horario TEXT NOT NULL,
-        servico TEXT NOT NULL,
-        preco REAL NOT NULL
-    )`, (err) => {
-        if (err) {
-            console.error('Erro ao criar a tabela:', err.message);
-        } else {
-            console.log('Tabela criada ou já existe.');
-        }
-    });
-});
-
-// Função para adicionar um agendamento
 function adicionarAgendamento(nome, telefone, data, horario, servico, preco, callback) {
     const sql = `INSERT INTO agendamentos (nome, telefone, data, horario, servico, preco) VALUES (?, ?, ?, ?, ?, ?)`;
     db.run(sql, [nome, telefone, data, horario, servico, preco], function(err) {
@@ -40,16 +18,15 @@ function adicionarAgendamento(nome, telefone, data, horario, servico, preco, cal
     });
 }
 
-// Função para listar todos os agendamentos
-function listarAgendamentos(callback) {
-    const sql = `SELECT * FROM agendamentos`;
-    db.all(sql, [], (err, rows) => {
+function listarAgendamentos(data, callback) {
+    const sql = `SELECT horario FROM agendamentos WHERE data = ?`;
+    db.all(sql, [data], (err, rows) => {
         if (err) {
             return callback(err);
         }
-        callback(null, rows);
+        const horarios = rows.map(row => row.horario);
+        callback(null, horarios);
     });
 }
 
-// Exporta as funções para serem usadas em outros arquivos
 module.exports = { adicionarAgendamento, listarAgendamentos };
