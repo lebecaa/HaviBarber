@@ -1,10 +1,11 @@
 {
   "name": "barbearia-backend",
   "version": "1.0.0",
+  "main": "index.js",
   "scripts": {
     "start": "vercel dev"
   },
   "dependencies": {
-    "mongodb": "^4.1.0"
+    "mongodb": "^4.17.2"
   }
 }
